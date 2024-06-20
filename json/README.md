@@ -1,7 +1,7 @@
-bitcoincore-rpc-json
+tapyruscore-rpc-json
 ====================
 
-A collection of JSON-enabled data types used in the `bitcoincore-rpc` crate.
+A collection of JSON-enabled data types used in the `tapyruscore-rpc` crate.
 
 # License
 

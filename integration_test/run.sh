@@ -1,14 +1,16 @@
 #!/bin/sh
 
-TESTDIR=/tmp/rust_bitcoincore_rpc_test
+TESTDIR=/tmp/rust_tapyruscore_rpc_test
 
 rm -rf ${TESTDIR}
 mkdir -p ${TESTDIR}/1 ${TESTDIR}/2
+echo ${GENESIS_BLOCK_WITH_SIG} > ${TESTDIR}/1/genesis.${NETWORK_ID}
+echo ${GENESIS_BLOCK_WITH_SIG} > ${TESTDIR}/2/genesis.${NETWORK_ID}
 
-# To kill any remaining open bitcoind.
-killall -9 bitcoind
+# To kill any remaining open tarpyrusd.
+killall -9 tapyrusd
 
-bitcoind -regtest \
+tapyrusd -dev -networkid=${NETWORK_ID} \
     -datadir=${TESTDIR}/1 \
     -port=12348 \
     -server=0 \
@@ -19,19 +21,14 @@ PID1=$!
 sleep 3
 
 BLOCKFILTERARG=""
-if bitcoind -version | grep -q "v0\.\(19\|2\)"; then
-    BLOCKFILTERARG="-blockfilterindex=1"
-fi
+FALLBACKFEEARG="-fallbackfee=0.00001000"
 
-FALLBACKFEEARG=""
-if bitcoind -version | grep -q "v0\.2"; then
-    FALLBACKFEEARG="-fallbackfee=0.00001000"
-fi
-
-bitcoind -regtest $BLOCKFILTERARG $FALLBACKFEEARG \
+tapyrusd -dev -networkid=${NETWORK_ID}$BLOCKFILTERARG $FALLBACKFEEARG \
     -datadir=${TESTDIR}/2 \
     -connect=127.0.0.1:12348 \
     -rpcport=12349 \
+    -rpcuser=rpcuser \
+    -rpcpassword=rpcpassword \
     -server=1 \
     -txindex=1 \
     -printtoconsole=0 \
@@ -43,8 +40,10 @@ PID2=$!
 sleep 5
 
 RPC_URL=http://localhost:12349 \
-    RPC_COOKIE=${TESTDIR}/2/regtest/.cookie \
+    RPC_USER=rpcuser \
+    RPC_PASS=rpcpassword \
     TESTDIR=${TESTDIR} \
+    PRIVATE_KEY=${PRIVATE_KEY} \
     cargo run
 
 RESULT=$?

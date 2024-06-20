@@ -8,11 +8,11 @@
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 //
 
-//! A very simple example used as a self-test of this library against a Bitcoin
+//! A very simple example used as a self-test of this library against a Tapyrus
 //! Core node.
-extern crate bitcoincore_rpc;
+extern crate tapyruscore_rpc;
 
-use bitcoincore_rpc::{bitcoin, Auth, Client, Error, RpcApi};
+use tapyruscore_rpc::{tapyrus, Auth, Client, Error, RpcApi};
 
 fn main_result() -> Result<(), Error> {
     let mut args = std::env::args();
@@ -35,11 +35,11 @@ fn main_result() -> Result<(), Error> {
     println!("best block hash by height: {}", best_block_hash_by_height);
     assert_eq!(best_block_hash_by_height, best_block_hash);
 
-    let bitcoin_block: bitcoin::Block = rpc.get_by_id(&best_block_hash)?;
-    println!("best block hash by `get`: {}", bitcoin_block.header.prev_blockhash);
-    let bitcoin_tx: bitcoin::Transaction =
-        rpc.get_by_id(&bitcoin_block.txdata[0].compute_txid())?;
-    println!("tx by `get`: {}", bitcoin_tx.compute_txid());
+    let tapyrus_block: tapyrus::Block = rpc.get_by_id(&best_block_hash)?;
+    println!("best block hash by `get`: {}", tapyrus_block.header.prev_blockhash);
+    let tapyrus_tx: tapyrus::Transaction =
+        rpc.get_by_id(&tapyrus_block.txdata[0].malfix_txid())?;
+    println!("tx by `get`: {}", tapyrus_tx.malfix_txid());
 
     Ok(())
 }

@@ -20,7 +20,7 @@ version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2c8d66485a3a2ea485c1913c4572ce0256067a5377ac8c75c4960e1cda98605f"
 dependencies = [
- "bitcoin-internals",
+ "tapyrus-internals",
  "bitcoin_hashes",
 ]
 
@@ -35,33 +35,6 @@ name = "bech32"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d965446196e3b7decd44aa7ee49e31d630118f90ef12f97900f262eb915c951d"
-
-[[package]]
-name = "bitcoin"
-version = "0.32.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7170e7750a20974246f17ece04311b4205a6155f1db564c5b224af817663c3ea"
-dependencies = [
- "base58ck",
- "bech32",
- "bitcoin-internals",
- "bitcoin-io",
- "bitcoin-units",
- "bitcoin_hashes",
- "hex-conservative",
- "hex_lit",
- "secp256k1",
- "serde",
-]
-
-[[package]]
-name = "bitcoin-internals"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30bdbe14aa07b06e6cfeffc529a1f099e5fbe249524f8125358604df99a4bed2"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "bitcoin-io"
@@ -79,22 +52,46 @@ dependencies = [
  "serde",
 ]
 
+
 [[package]]
-name = "bitcoin_hashes"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb18c03d0db0247e147a21a6faafd5a7eb851c743db062de72018b6b7e8e4d16"
+name = "tapyrus"
+version = "0.5.0"
+source = "git+https://github.com/chaintope/rust-tapyrus?branch=update_on_bitcoin_0.31.x#2e9a8a4e391f3df6819a54908c55feb58c7e106a"
 dependencies = [
- "bitcoin-io",
+ "bech32",
+ "hex-conservative",
+ "hex_lit",
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "secp256k1",
+ "serde",
+ "tapyrus-internals",
+ "tapyrus_hashes",
+]
+
+[[package]]
+name = "tapyrus-internals"
+version = "0.2.0"
+source = "git+https://github.com/chaintope/rust-tapyrus?branch=update_on_bitcoin_0.31.x#2e9a8a4e391f3df6819a54908c55feb58c7e106a"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "tapyrus_hashes"
+version = "0.13.0"
+source = "git+https://github.com/chaintope/rust-tapyrus?branch=update_on_bitcoin_0.31.x#2e9a8a4e391f3df6819a54908c55feb58c7e106a"
+dependencies = [
  "hex-conservative",
  "serde",
 ]
 
 [[package]]
-name = "bitcoincore-rpc"
+name = "tapyruscore-rpc"
 version = "0.19.0"
 dependencies = [
- "bitcoincore-rpc-json",
+ "tapyruscore-rpc-json",
  "jsonrpc",
  "log",
  "serde",
@@ -103,7 +100,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "bitcoincore-rpc-json"
+name = "tapyruscore-rpc-json"
 version = "0.19.0"
 dependencies = [
  "bitcoin",
@@ -194,7 +191,7 @@ name = "integration_test"
 version = "0.1.0"
 dependencies = [
  "bitcoin",
- "bitcoincore-rpc",
+ "tapyruscore-rpc",
  "lazy_static",
  "log",
 ]

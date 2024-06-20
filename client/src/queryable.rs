@@ -8,13 +8,14 @@
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 //
 
-use crate::bitcoin;
+use crate::tapyrus;
 use serde_json;
+use tapyrus::hashes::hex::FromHex;
 
 use crate::client::Result;
 use crate::client::RpcApi;
 
-/// A type that can be queried from Bitcoin Core.
+/// A type that can be queried from Tapyrus Core.
 pub trait Queryable<C: RpcApi>: Sized {
     /// Type of the ID used to query the item.
     type Id;
@@ -22,28 +23,30 @@ pub trait Queryable<C: RpcApi>: Sized {
     fn query(rpc: &C, id: &Self::Id) -> Result<Self>;
 }
 
-impl<C: RpcApi> Queryable<C> for bitcoin::block::Block {
-    type Id = bitcoin::BlockHash;
+impl<C: RpcApi> Queryable<C> for tapyrus::block::Block {
+    type Id = tapyrus::BlockHash;
 
     fn query(rpc: &C, id: &Self::Id) -> Result<Self> {
         let rpc_name = "getblock";
         let hex: String = rpc.call(rpc_name, &[serde_json::to_value(id)?, 0.into()])?;
-        Ok(bitcoin::consensus::encode::deserialize_hex(&hex)?)
+        let bytes = Vec::from_hex(&hex).unwrap();
+        Ok(tapyrus::consensus::encode::deserialize(&bytes)?)
     }
 }
 
-impl<C: RpcApi> Queryable<C> for bitcoin::transaction::Transaction {
-    type Id = bitcoin::Txid;
+impl<C: RpcApi> Queryable<C> for tapyrus::transaction::Transaction {
+    type Id = tapyrus::hashes::sha256d::Hash;
 
     fn query(rpc: &C, id: &Self::Id) -> Result<Self> {
         let rpc_name = "getrawtransaction";
         let hex: String = rpc.call(rpc_name, &[serde_json::to_value(id)?])?;
-        Ok(bitcoin::consensus::encode::deserialize_hex(&hex)?)
+        let bytes = Vec::from_hex(&hex).unwrap();
+        Ok(tapyrus::consensus::encode::deserialize(&bytes)?)
     }
 }
 
 impl<C: RpcApi> Queryable<C> for Option<crate::json::GetTxOutResult> {
-    type Id = bitcoin::OutPoint;
+    type Id = tapyrus::OutPoint;
 
     fn query(rpc: &C, id: &Self::Id) -> Result<Self> {
         rpc.get_tx_out(&id.txid, id.vout, Some(true))
