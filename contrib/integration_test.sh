@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Run the integration test optionally downloading Bitcoin Core binary if BITCOINVERSION is set.
+# Run the integration test optionally downloading Bitcoin Core binary if TAPYRUSVERSION is set.
 
 set -euo pipefail
 
@@ -11,20 +11,20 @@ export CARGO_TERM_VERBOSE=true
 
 main() {
     # If a specific version of Bitcoin Core is set then download the binary.
-    if [ -n "${BITCOINVERSION+x}" ]; then
+    if [ -n "${TAPYRUSVERSION+x}" ]; then
         download_binary
     fi
 
-    need_cmd bitcoind
+    need_cmd tapyrusd
 
     cd integration_test
     ./run.sh
 }
 
 download_binary() {
-    wget https://bitcoincore.org/bin/bitcoin-core-$BITCOINVERSION/bitcoin-$BITCOINVERSION-x86_64-linux-gnu.tar.gz
-    tar -xzvf bitcoin-$BITCOINVERSION-x86_64-linux-gnu.tar.gz
-    export PATH=$PATH:$(pwd)/bitcoin-$BITCOINVERSION/bin
+    wget https://github.com/chaintope/tapyrus-core/releases/download/v$TAPYRUSVERSION/tapyrus-core-$TAPYRUSVERSION-$ARCH-linux-gnu.tar.gz
+    tar -xzvf tapyrus-core-$TAPYRUSVERSION-$ARCH-linux-gnu.tar.gz
+    export PATH=$PATH:$(pwd)/tapyrus-core-$TAPYRUSVERSION/bin
 }
 
 err() {
