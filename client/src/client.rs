@@ -42,7 +42,7 @@ pub type Result<T> = result::Result<T, Error>;
 /// for use as RPC arguments
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct JsonOutPoint {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
 }
 
@@ -422,7 +422,7 @@ pub trait RpcApi: Sized {
 
     fn get_raw_transaction(
         &self,
-        txid: &tapyrus::Txid,
+        txid: &tapyrus::MalFixTxid,
         block_hash: Option<&tapyrus::BlockHash>,
     ) -> Result<Transaction> {
         let mut args = [into_json(txid)?, into_json(false)?, opt_into_json(block_hash)?];
@@ -433,7 +433,7 @@ pub trait RpcApi: Sized {
 
     fn get_raw_transaction_hex(
         &self,
-        txid: &tapyrus::Txid,
+        txid: &tapyrus::MalFixTxid,
         block_hash: Option<&tapyrus::BlockHash>,
     ) -> Result<String> {
         let mut args = [into_json(txid)?, into_json(false)?, opt_into_json(block_hash)?];
@@ -442,7 +442,7 @@ pub trait RpcApi: Sized {
 
     fn get_raw_transaction_info(
         &self,
-        txid: &tapyrus::Txid,
+        txid: &tapyrus::MalFixTxid,
         block_hash: Option<&tapyrus::BlockHash>,
     ) -> Result<json::GetRawTransactionResult> {
         let mut args = [into_json(txid)?, into_json(true)?, opt_into_json(block_hash)?];
@@ -479,7 +479,7 @@ pub trait RpcApi: Sized {
 
     fn get_transaction(
         &self,
-        txid: &tapyrus::Txid,
+        txid: &tapyrus::MalFixTxid,
         include_watchonly: Option<bool>,
     ) -> Result<json::GetTransactionResult> {
         let mut args = [into_json(txid)?, opt_into_json(include_watchonly)?];
@@ -519,7 +519,7 @@ pub trait RpcApi: Sized {
 
     fn get_tx_out(
         &self,
-        txid: &tapyrus::Txid,
+        txid: &tapyrus::MalFixTxid,
         vout: u32,
         include_mempool: Option<bool>,
     ) -> Result<Option<json::GetTxOutResult>> {
@@ -529,7 +529,7 @@ pub trait RpcApi: Sized {
 
     fn get_tx_out_proof(
         &self,
-        txids: &[tapyrus::Txid],
+        txids: &[tapyrus::MalFixTxid],
         block_hash: Option<&tapyrus::BlockHash>,
     ) -> Result<Vec<u8>> {
         let mut args = [into_json(txids)?, opt_into_json(block_hash)?];
@@ -867,19 +867,19 @@ pub trait RpcApi: Sized {
     }
 
     /// Get txids of all transactions in a memory pool
-    fn get_raw_mempool(&self) -> Result<Vec<tapyrus::Txid>> {
+    fn get_raw_mempool(&self) -> Result<Vec<tapyrus::MalFixTxid>> {
         self.call("getrawmempool", &[])
     }
 
     /// Get details for the transactions in a memory pool
     fn get_raw_mempool_verbose(
         &self,
-    ) -> Result<HashMap<tapyrus::Txid, json::GetMempoolEntryResult>> {
+    ) -> Result<HashMap<tapyrus::MalFixTxid, json::GetMempoolEntryResult>> {
         self.call("getrawmempool", &[into_json(true)?])
     }
 
     /// Get mempool data for given transaction
-    fn get_mempool_entry(&self, txid: &tapyrus::Txid) -> Result<json::GetMempoolEntryResult> {
+    fn get_mempool_entry(&self, txid: &tapyrus::MalFixTxid) -> Result<json::GetMempoolEntryResult> {
         self.call("getmempoolentry", &[into_json(txid)?])
     }
 
@@ -899,7 +899,7 @@ pub trait RpcApi: Sized {
         replaceable: Option<bool>,
         confirmation_target: Option<u32>,
         estimate_mode: Option<json::EstimateMode>,
-    ) -> Result<tapyrus::Txid> {
+    ) -> Result<tapyrus::MalFixTxid> {
         let mut args = [
             address.to_string().into(),
             into_json(amount.to_tpc())?,
@@ -1010,7 +1010,7 @@ pub trait RpcApi: Sized {
         self.call("ping", &[])
     }
 
-    fn send_raw_transaction<R: RawTx>(&self, tx: R) -> Result<tapyrus::Txid> {
+    fn send_raw_transaction<R: RawTx>(&self, tx: R) -> Result<tapyrus::MalFixTxid> {
         self.call("sendrawtransaction", &[tx.raw_hex().into()])
     }
 

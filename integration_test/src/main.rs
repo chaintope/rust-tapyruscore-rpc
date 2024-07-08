@@ -29,7 +29,7 @@ use tapyrus::hashes::Hash;
 use tapyrus::{secp256k1, sighash, PublicKey, ScriptBuf};
 use tapyrus::{
     transaction, Address, Amount, Network, OutPoint, PrivateKey, Sequence,
-    SignedAmount, Transaction, TxIn, TxOut, Txid, Witness,
+    SignedAmount, Transaction, TxIn, TxOut, MalFixTxid, Witness,
 };
 use tapyruscore_rpc::tapyruscore_rpc_json::{
     GetBlockTemplateModes, GetBlockTemplateRules, GetZmqNotificationsResult, ScanTxOutRequest,
@@ -477,7 +477,7 @@ fn test_get_transaction(cl: &Client) {
     assert_eq!(tx.amount, sbtc(-1.0));
     assert_eq!(tx.info.txid, txid);
 
-    let fake = Txid::hash(&[1, 2]);
+    let fake = MalFixTxid::hash(&[1, 2]);
     assert!(cl.get_transaction(&fake, Some(true)).is_err());
 }
 
@@ -521,7 +521,7 @@ fn test_get_mempool_entry(cl: &Client) {
     let entry = cl.get_mempool_entry(&txid).unwrap();
     assert!(entry.spent_by.is_empty());
 
-    let fake = Txid::hash(&[1, 2]);
+    let fake = MalFixTxid::hash(&[1, 2]);
     assert!(cl.get_mempool_entry(&fake).is_err());
 }
 

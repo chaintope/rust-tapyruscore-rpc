@@ -35,7 +35,7 @@ impl<C: RpcApi> Queryable<C> for tapyrus::block::Block {
 }
 
 impl<C: RpcApi> Queryable<C> for tapyrus::transaction::Transaction {
-    type Id = tapyrus::hashes::sha256d::Hash;
+    type Id = tapyrus::MalFixTxid;
 
     fn query(rpc: &C, id: &Self::Id) -> Result<Self> {
         let rpc_name = "getrawtransaction";
