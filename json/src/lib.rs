@@ -201,7 +201,7 @@ pub struct GetBlockResult {
     pub features_hex: Option<Vec<u8>>,
     pub merkleroot: tapyrus::hash_types::TxMerkleNode,
     pub immutablemerkleroot: tapyrus::hash_types::TxMerkleNode,
-    pub tx: Vec<tapyrus::Txid>,
+    pub tx: Vec<tapyrus::MalFixTxid>,
     pub time: usize,
     pub mediantime: Option<usize>,
     pub n_tx: usize,
@@ -531,7 +531,7 @@ pub struct GetRawTransactionResultVin {
     #[serde(default, with = "crate::serde_hex::opt")]
     pub coinbase: Option<Vec<u8>>,
     /// Not provided for coinbase txs.
-    pub txid: Option<tapyrus::Txid>,
+    pub txid: Option<tapyrus::MalFixTxid>,
     /// Not provided for coinbase txs.
     pub vout: Option<u32>,
     /// The scriptSig in case of a non-coinbase tx.
@@ -589,8 +589,8 @@ pub struct GetRawTransactionResult {
     pub in_active_chain: Option<bool>,
     #[serde(with = "crate::serde_hex")]
     pub hex: Vec<u8>,
-    pub txid: tapyrus::Txid,
-    pub hash: tapyrus::Wtxid,
+    pub txid: tapyrus::MalFixTxid,
+    pub hash: tapyrus::Txid,
     pub size: usize,
     pub features: u32,
     pub locktime: u32,
@@ -676,14 +676,14 @@ pub struct WalletTxInfo {
     pub blockindex: Option<usize>,
     pub blocktime: Option<u64>,
     pub blockheight: Option<u32>,
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub time: u64,
     pub timereceived: u64,
     #[serde(rename = "bip125-replaceable")]
     pub bip125_replaceable: Bip125Replaceable,
     /// Conflicting transaction ids
     #[serde(rename = "walletconflicts")]
-    pub wallet_conflicts: Vec<tapyrus::Txid>,
+    pub wallet_conflicts: Vec<tapyrus::MalFixTxid>,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
@@ -763,7 +763,7 @@ pub struct ListUnspentQueryOptions {
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ListUnspentResultEntry {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
     pub address: Option<Address<NetworkUnchecked>>,
     pub label: Option<String>,
@@ -790,13 +790,13 @@ pub struct ListReceivedByAddressResult {
     pub amount: Amount,
     pub confirmations: u32,
     pub label: String,
-    pub txids: Vec<tapyrus::Txid>,
+    pub txids: Vec<tapyrus::MalFixTxid>,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignRawTransactionResultError {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
     pub script_sig: ScriptBuf,
     pub sequence: u32,
@@ -820,7 +820,7 @@ impl SignRawTransactionResult {
 
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub struct TestMempoolAcceptResult {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub allowed: bool,
     #[serde(rename = "reject-reason")]
     pub reject_reason: Option<String>,
@@ -1095,10 +1095,10 @@ pub struct GetMempoolEntryResult {
     /// Fee information
     pub fees: GetMempoolEntryResultFees,
     /// Unconfirmed transactions used as inputs for this transaction
-    pub depends: Vec<tapyrus::Txid>,
+    pub depends: Vec<tapyrus::MalFixTxid>,
     /// Unconfirmed transactions spending outputs from this transaction
     #[serde(rename = "spentby")]
-    pub spent_by: Vec<tapyrus::Txid>,
+    pub spent_by: Vec<tapyrus::MalFixTxid>,
     /// Whether this transaction is currently unbroadcast (initial broadcast not yet acknowledged by any peers)
     /// Added in Bitcoin Core v0.21
     pub unbroadcast: Option<bool>,
@@ -1573,10 +1573,9 @@ pub struct GetBlockTemplateResult {
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub struct GetBlockTemplateResultTransaction {
     /// The transaction id
-    pub txid: tapyrus::Txid,
-    /// The wtxid of the transaction
-    #[serde(rename = "hash")]
-    pub wtxid: tapyrus::Wtxid,
+    pub txid: tapyrus::MalFixTxid,
+    /// The hash of the transaction with signatures
+    pub hash: tapyrus::Txid,
     /// The serilaized transaction bytes
     #[serde(with = "crate::serde_hex", rename = "data")]
     pub raw_tx: Vec<u8>,
@@ -1708,8 +1707,8 @@ pub struct FinalizePsbtResult {
 /// Model for decode transaction
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub struct DecodeRawTransactionResult {
-    pub txid: tapyrus::hashes::sha256d::Hash,
-    pub hash: tapyrus::Wtxid,
+    pub txid: tapyrus::MalFixTxid,
+    pub hash: tapyrus::Txid,
     pub size: u32,
     pub features: u32,
     pub locktime: u32,
@@ -1798,7 +1797,7 @@ impl serde::Serialize for SigHashType {
 #[derive(Serialize, Clone, PartialEq, Eq, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateRawTransactionInput {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sequence: Option<u32>,
@@ -1875,7 +1874,7 @@ impl FundRawTransactionResult {
 #[derive(Serialize, Clone, PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignRawTransactionInput {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
     pub script_pub_key: ScriptBuf,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2060,7 +2059,7 @@ pub struct ScanTxOutResult {
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Utxo {
-    pub txid: tapyrus::Txid,
+    pub txid: tapyrus::MalFixTxid,
     pub vout: u32,
     pub script_pub_key: tapyrus::ScriptBuf,
     #[serde(with = "tapyrus::amount::serde::as_tpc")]
